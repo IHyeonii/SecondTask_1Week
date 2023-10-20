@@ -8,10 +8,14 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TransactionCard {
   private Long cardId; //카드ID
+  private Long transactionId; //환승Id
+  private int transCnt; //환승 횟수
   private LocalTime boardTime; //승차시간
   private LocalTime alightTime; //하차시간
   private Long routeId; //노선ID
@@ -19,88 +23,82 @@ public class TransactionCard {
   private Long alightSID; //도착 정류장
   private int passengerCnt; //승객 수
 
+  public Long getTransactionId() {
+    return transactionId;
+  }
+  public void setTransactionId(Long transactionId) {
+    this.transactionId = transactionId;
+  }
+  public int getTransCnt() {
+    return transCnt;
+  }
+  public void setTransCnt(int transCnt) {
+    this.transCnt = transCnt;
+  }
   public Long getCardId() {
     return cardId;
   }
-
   public void setCardId(Long cardId) {
     this.cardId = cardId;
   }
-
   public LocalTime getBoardTime() {
     return boardTime;
   }
-
   public void setBoardTime(LocalTime boardTime) {
     this.boardTime = boardTime;
   }
-
   public LocalTime getAlightTime() {
     return alightTime;
   }
-
   public void setAlightTime(LocalTime alightTime) {
     this.alightTime = alightTime;
   }
-
   public Long getRouteId() {
     return routeId;
   }
-
   public void setRouteId(Long routeId) {
     this.routeId = routeId;
   }
-
   public Long getBoardSID() {
     return boardSID;
   }
-
   public void setBoardSID(Long boardSID) {
     this.boardSID = boardSID;
   }
-
   public Long getAlightSID() {
     return alightSID;
   }
-
   public void setAlightSID(Long alightSID) {
     this.alightSID = alightSID;
   }
-
   public int getPassengerCnt() {
     return passengerCnt;
   }
-
   public void setPassengerCnt(int passengerCnt) {
     this.passengerCnt = passengerCnt;
   }
-
   @Override
   public String toString() {
-    return "TransactionCard{" +
-        "cardId=" + cardId +
-        ", boardTime=" + boardTime +
-        ", alightTime=" + alightTime +
-        ", routeId=" + routeId +
-        ", boardSID=" + boardSID +
-        ", alightSID=" + alightSID +
-        ", passengerCnt=" + passengerCnt +
-        '}';
+    return "TransactionCard [cardId=" + cardId + ", transactionId=" + transactionId + ", transCnt=" + transCnt
+        + ", boardTime=" + boardTime + ", alightTime=" + alightTime + ", routeId=" + routeId + ", boardSID="
+        + boardSID + ", alightSID=" + alightSID + ", passengerCnt=" + passengerCnt + "]";
   }
 
-  public List<TransactionCard> ReadTCardData() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_test.txt");
+  public Map<String, TransactionCard> ReadTCardData() throws Exception {
+    File targetFile = new File("C:\\Users\\qbic\\Desktop\\data\\TCD\\TCD_20201102.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "euc-kr"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
-    List<TransactionCard> list = new ArrayList<>();
+    Map<String, TransactionCard> cardInfo = new HashMap<>();
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
 
     while ((str = csvReader.readNext()) != null) {
       TransactionCard tCard = new TransactionCard();
       tCard.setCardId(Long.parseLong(str[0]));
+      tCard.setTransactionId(Long.parseLong(str[1]));
+      tCard.setTransCnt(Integer.parseInt(str[2]));
 
       // 승차시간  20201102|130301 -> hour: 13 / minute:3 / second:1
       int hour = Integer.parseInt(str[3].substring(8, 10));
@@ -139,12 +137,23 @@ public class TransactionCard {
 
       tCard.setPassengerCnt(Integer.parseInt(str[11]));
 
-      list.add(tCard);
+      // Key 생성: 카드id + 트랜잭션id + 환승횟수
+      Long cardId = tCard.getCardId();
+      String key1 = String.valueOf(cardId);
+
+      Long tId = tCard.getTransactionId();
+      String key2 = String.valueOf(tId);
+
+      Integer cnt = tCard.getTransCnt();
+      String key3 = String.valueOf(cnt);
+
+      String key = key1 + "," + key2 + "," + key3;
+
+      cardInfo.put(key, tCard);
     }
-//    System.out.println(list); // while 반복문으로 test 파일에서 필요한 값 추출 완료
     csvReader.close();
     reader.close();
 
-    return list;
+    return cardInfo;
   }
 }
