@@ -85,7 +85,7 @@ public class TransactionCard {
   }
 
   public Map<String, TransactionCard> ReadTCardData() throws Exception {
-    File targetFile = new File("C:\\Users\\qbic\\Desktop\\data\\TCD\\TCD_20201102.txt");
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "euc-kr"));
     CSVReader csvReader = new CSVReader(reader);
 

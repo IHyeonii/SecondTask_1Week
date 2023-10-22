@@ -6,9 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class BusRoute {// 버스노선-정류장 데이터
@@ -17,10 +15,17 @@ public class BusRoute {// 버스노선-정류장 데이터
   private Long stationId; // 정류장Id
   private String stationName; //정류장 명
   private Long districtId; //행정구역 정보
+
+//  public BusRoute(Long routeId, Long stationId, String stationName, Long districtId) {
+//    this.routeId = routeId;
+//    this.stationId = stationId;
+//    this.stationName = stationName;
+//    this.districtId = districtId;
+//  }
+
   public Long getRouteId() {
     return routeId;
   }
-
   public void setRouteId(Long routeId) {
     this.routeId = routeId;
   }
@@ -48,32 +53,22 @@ public class BusRoute {// 버스노선-정류장 데이터
   public void setDistrictId(Long districtId) {
     this.districtId = districtId;
   }
+
   @Override
   public String toString() {
     return "BusRoute [routeId=" + routeId + ", seq=" + seq + ", stationId=" + stationId + ", stationName="
         + stationName + ", districtId=" + districtId + "]";
   }
 
-  public Map<String, BusRoute> ReadBusData() throws Exception {
-    File targetFile = new File("C:\\Users\\qbic\\Desktop\\data\\BRS\\BRS_20201102.txt");
+  public static Map<String, BusRoute> ReadBusData() throws Exception {
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
-    // 배열로 담는 이유?
-
-    // 노선에 대한 정보를 담는 구조가 있을 거고..
-    // Key: 노선ID, Value: Map<순번, 정류장ID>
-    // 노선의 정류장에 대한 정보를 담는 구조가 있을 것
-    // Key: 노선ID + "," + 정류장ID, Value: BusRoute 객체
 
     Map<String,  BusRoute> busInfo = new HashMap<>();
-    // Key: 노선ID
-    // Value:   BusRote 객체
-
-    // 클래스는 멤버를 가지는데
-    // 멤버는 변수와 메소드로 이루어져있다
-    // 멤버에 접근하는 방법
+    // Key: 노선Id, Value: BusRote 객체
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
     // 객체를 담을 맵이나 리스트를 반복문 밖에

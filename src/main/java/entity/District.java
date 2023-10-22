@@ -10,60 +10,54 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class District {// 읍면동 테이블
-  private Long districtId; // 행정구역ID
-  private String districtName; // 서울특별시
-  private String sigunguName; //종로구
+  private int zoneId; // 읍면동Id (행정구역ID)
+  private String name; // 삼청동 사직동 부암동 ..
+  private String fullName; //서울시 종로구 사직동
 
-  public Long getDistrictId() {
-    return districtId;
+  public int getZoneId() {
+    return zoneId;
   }
-
-  public void setDistrictId(Long districtId) {
-    this.districtId = districtId;
+  public void setZoneId(int zoneId) {
+    this.zoneId = zoneId;
   }
-
-  public String getDistrictName() {
-    return districtName;
+  public String getName() {
+    return name;
   }
-
-  public void setDistrictName(String districtName) {
-    this.districtName = districtName;
+  public void setName(String name) {
+    this.name = name;
   }
-
-  public String getSigunguName() {
-    return sigunguName;
+  public String getFullName() {
+    return fullName;
   }
-
-  public void setSigunguName(String sigunguName) {
-    this.sigunguName = sigunguName;
+  public void setFullName(String fullName) {
+    this.fullName = fullName;
   }
-
   @Override
   public String toString() {
     return "District{" +
-        "districtId=" + districtId +
-        ", districtName='" + districtName + '\'' +
-        ", sigunguName='" + sigunguName + '\'' +
+        "zoneId=" + zoneId +
+        ", name='" + name + '\'' +
+        ", fullName='" + fullName + '\'' +
         '}';
   }
 
-  public Map<Long, District> ReadDistrict() throws Exception {
+  public Map<Integer, District> ReadDistrict() throws Exception {
     File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\District3.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null;
-    Map<Long, District> districtInfo = new HashMap<>();
+    Map<Integer, District> districtInfo = new HashMap<>();
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
 
     while ((str = csvReader.readNext()) != null) {
       District district = new District();
-      district.setDistrictId(Long.parseLong(str[0]));
-      district.setDistrictName(str[5]);
-      district.setSigunguName(str[6]);
+      district.setZoneId(Integer.parseInt(str[0]));
+      district.setName(str[1]);
+      district.setFullName(str[2]);
 
-      Long key = district.getDistrictId();
+      int key = district.getZoneId();
 
       districtInfo.put(key, district);
     }

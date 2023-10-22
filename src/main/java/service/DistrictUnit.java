@@ -19,7 +19,7 @@ public class DistrictUnit { //행정구역 단위 통행량, 통행 시간
   public void getDistrictUnitInfo() throws Exception {
 
     District district = new District();
-    Map<Long, District> districtData = district.ReadDistrict();
+    Map<Integer, District> districtData = district.ReadDistrict();
 
     TransactionCard transactionCard = new TransactionCard();
     Map<String, TransactionCard> tCardInfo = transactionCard.ReadTCardData(); // 카드 데이터를 읽고
@@ -55,22 +55,12 @@ public class DistrictUnit { //행정구역 단위 통행량, 통행 시간
       String startDstrictName ="";
       String endDstrictName ="";
 
-      if(districtData.containsKey(startDistrict)) {
-        startDstrictName = district.getDistrictName();
-      }
-
-
-
-
 
     }
-
-
-
-
   }
 
 
 
 
 }
+
