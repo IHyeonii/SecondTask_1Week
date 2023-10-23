@@ -53,7 +53,7 @@ public class BusRouteUpdate {// 버스노선-정류장 데이터
   }
 
   public static HashMap<Integer, HashMap<Long, BusRouteUpdate>> ReadBusData() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\BRS_test.txt");
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\BRS_20201102.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 

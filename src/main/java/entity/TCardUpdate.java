@@ -100,7 +100,7 @@ public class TCardUpdate {
   }
 
   public HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardUpdate>>> ReadTCardData() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_test.txt");
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_20201102.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
