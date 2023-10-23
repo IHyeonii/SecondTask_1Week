@@ -19,7 +19,7 @@ public class RouteAndStationUnit { //노선-정류장별 승하차, 재차인원
     for(String key : cardKey) {
       TransactionCard cardValue = tCardInfo.get(key); // 카드데이터 모든 데이터 포함
 
-      Long routeId = cardValue.getRouteId(); //노선ID
+      int routeId = cardValue.getRouteId(); //노선ID
       Long boardSID = cardValue.getBoardSID(); //출발정류장ID
       Long alightSID = cardValue.getAlightSID(); //도착정류장ID
 
@@ -30,13 +30,13 @@ public class RouteAndStationUnit { //노선-정류장별 승하차, 재차인원
       Long startDistrict = 0L; // 출발정류장ID와 일치하는 행정구역ID를 담고있음
       Long endDistrict = 0L;
 
-      if(busData.containsKey(routeAndBoard)) {
-        startDistrict = busData.get(routeAndBoard).getDistrictId(); // 행정구역ID
-      }
-
-      if(busData.containsKey(routeAndAlight)) {
-        endDistrict = busData.get(routeAndAlight).getDistrictId();
-      }
+//      if(busData.containsKey(routeAndBoard)) {
+//        startDistrict = busData.get(routeAndBoard).getDistrictId(); // 행정구역ID
+//      }
+//
+//      if(busData.containsKey(routeAndAlight)) {
+//        endDistrict = busData.get(routeAndAlight).getDistrictId();
+//      }
 
 
     }

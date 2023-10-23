@@ -7,11 +7,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.time.LocalTime;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
-public class TransactionCard {
+public class TCardUpdate {
   private int cardId; //카드ID
   private int transactionId; //환승Id
   private int transCnt; //환승 횟수
@@ -101,18 +99,18 @@ public class TransactionCard {
         + boardSID + ", alightSID=" + alightSID + ", passengerCnt=" + passengerCnt + "]";
   }
 
-  public Map<String, TransactionCard> ReadTCardData() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_20201102.txt");
+  public HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardUpdate>>> ReadTCardData() throws Exception {
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_test.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
-    Map<String, TransactionCard> cardInfo = new HashMap<>();
+    HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardUpdate>>> cardInfo = new HashMap<>();
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
 
     while ((str = csvReader.readNext()) != null) {
-      TransactionCard tCard = new TransactionCard();
+      TCardUpdate tCard = new TCardUpdate();
       tCard.setCardId(Integer.parseInt(str[0]));
       tCard.setTransactionId(Integer.parseInt(str[1]));
       tCard.setTransCnt(Integer.parseInt(str[2]));
@@ -156,16 +154,16 @@ public class TransactionCard {
 
       // Key 생성: 카드id + 트랜잭션id + 환승횟수
       int cardId = tCard.getCardId();
-      String key1 = String.valueOf(cardId);
+      int transId = tCard.getTransactionId();
+      int transCnt = tCard.getTransCnt();
 
-      int tId = tCard.getTransactionId();
-      String key2 = String.valueOf(tId);
-
-      int cnt = tCard.getTransCnt();
-      String key3 = String.valueOf(cnt);
-
-      String key = key1 + "," + key2 + "," + key3;
-      cardInfo.put(key, tCard);
+      if (!cardInfo.containsKey(cardId)) {
+        cardInfo.put(cardId, new HashMap<>());
+      }
+      if (!cardInfo.get(cardId).containsKey(transId)) {
+        cardInfo.get(cardId).put(transId, new HashMap<>());
+      }
+      cardInfo.get(cardId).get(transId).put(transCnt, tCard);
     }
     csvReader.close();
     reader.close();
