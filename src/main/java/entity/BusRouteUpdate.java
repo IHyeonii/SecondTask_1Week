@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 
 public class BusRouteUpdate {// 버스노선-정류장 데이터
   private int routeId; // 노선ID
@@ -80,6 +81,37 @@ public class BusRouteUpdate {// 버스노선-정류장 데이터
       if(!busInfo.get(routeId).containsKey(stationId)) {
         busInfo.get(routeId).put(stationId, busRoute);
       }
+    }
+    csvReader.close();
+    reader.close();
+
+    return busInfo;
+  }
+
+  public static Map<String, BusRouteUpdate> AddSeqBusData() throws Exception{
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\BRS_test2.txt");
+    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
+    CSVReader csvReader = new CSVReader(reader);
+
+    String[] str = null;
+
+    Map<String, BusRouteUpdate> busInfo = new HashMap<>();
+    // Key: 노선Id, 순번, Value: BusRote 객체
+
+    String[] header = csvReader.readNext();
+
+    while ((str = csvReader.readNext()) != null) {
+      BusRouteUpdate busRoute = new BusRouteUpdate();
+      busRoute.setRouteId(Integer.parseInt(str[0]));
+      busRoute.setSeq(Integer.parseInt(str[1]));
+      busRoute.setStationId(Long.parseLong(str[2]));
+
+      int routeId = busRoute.getRouteId();
+      int seq = busRoute.getSeq();
+
+      String key = routeId + String.valueOf(",") + seq;
+
+      busInfo.put(key, busRoute);
     }
     csvReader.close();
     reader.close();
