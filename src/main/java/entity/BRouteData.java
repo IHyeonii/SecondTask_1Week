@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BusRouteUpdate {// 버스노선-정류장 데이터
+public class BRouteData {// 버스노선-정류장 데이터
   private int routeId; // 노선ID
   private int seq; //정류장 순번
   private Long stationId; // 정류장Id
@@ -53,20 +53,20 @@ public class BusRouteUpdate {// 버스노선-정류장 데이터
         + stationName + ", districtId=" + districtId + "]";
   }
 
-  public static HashMap<Integer, HashMap<Long, BusRouteUpdate>> ReadBusData() throws Exception {
+  public static HashMap<Integer, HashMap<Long, BRouteData>> ReadBRSData() throws Exception {
     File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\BRS_20201102.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
 
-    HashMap<Integer, HashMap<Long, BusRouteUpdate>> busInfo = new HashMap<>();
+    HashMap<Integer, HashMap<Long, BRouteData>> busInfo = new HashMap<>();
     // Key: 노선Id, Value: BusRote 객체
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
     // 객체를 담을 맵이나 리스트를 반복문 밖에
     while ((str = csvReader.readNext()) != null) {
-      BusRouteUpdate busRoute = new BusRouteUpdate();
+      BRouteData busRoute = new BRouteData();
       busRoute.setRouteId(Integer.parseInt(str[0]));
       busRoute.setStationId(Long.parseLong(str[2]));
       busRoute.setStationName(str[4]);
@@ -88,20 +88,20 @@ public class BusRouteUpdate {// 버스노선-정류장 데이터
     return busInfo;
   }
 
-  public static Map<String, BusRouteUpdate> AddSeqBusData() throws Exception{
+  public static Map<String, BRouteData> AddSeqBusData() throws Exception{
     File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\BRS_test2.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null;
 
-    Map<String, BusRouteUpdate> busInfo = new HashMap<>();
+    Map<String, BRouteData> busInfo = new HashMap<>();
     // Key: 노선Id, 순번, Value: BusRote 객체
 
     String[] header = csvReader.readNext();
 
     while ((str = csvReader.readNext()) != null) {
-      BusRouteUpdate busRoute = new BusRouteUpdate();
+      BRouteData busRoute = new BRouteData();
       busRoute.setRouteId(Integer.parseInt(str[0]));
       busRoute.setSeq(Integer.parseInt(str[1]));
       busRoute.setStationId(Long.parseLong(str[2]));

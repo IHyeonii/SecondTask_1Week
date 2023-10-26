@@ -1,34 +1,38 @@
 package service;
 
-import entity.BusRouteUpdate;
+import entity.BRouteData;
 import entity.District;
 import entity.TCardUpdate;
 
 import java.time.LocalTime;
 import java.util.*;
 
+// 클래스명 바꿔 ㅋ
 public class DistrictUnit { //행정구역 단위 OD 통행량, 통행 시간
   public List<StringBuilder> getDistrictUnitInfo() throws Exception {
     District district = new District();
     Map<Integer, District> districtData = district.ReadDistrict();
 
     // key: 노선ID, 정류장ID, value: BusRouteUpdate
-    HashMap<Integer, HashMap<Long, BusRouteUpdate>> busData = BusRouteUpdate.ReadBusData();
+    // Ben : BusRouteUpdate 클래스명 맘에 안듬 !!!
+    HashMap<Integer, HashMap<Long, BRouteData>> busData = BRouteData.ReadBRSData();
 
     //key: 정류장ID
-    Map<Long, BusRouteUpdate> stationInfo = new HashMap<>();
+    //BusRouteUpdate -> Station 클래스를 만들어서 넣어주세요.
+    Map<Long, BRouteData> stationInfo = new HashMap<>();
 
-    for(Map.Entry<Integer, HashMap<Long, BusRouteUpdate>> entry : busData.entrySet()) {
+    for(Map.Entry<Integer, HashMap<Long, BRouteData>> entry : busData.entrySet()) {
       for (int firstKey : busData.keySet()) {
-        HashMap<Long, BusRouteUpdate> routeId = busData.get(firstKey);
+        HashMap<Long, BRouteData> routeId = busData.get(firstKey);
 
         for (long secondKey : routeId.keySet()) {
-          BusRouteUpdate values = routeId.get(secondKey);
+          BRouteData values = routeId.get(secondKey);
 
           stationInfo.put(secondKey, values);
         }
       }
     }
+
 //		    System.out.println(stationInfo);
 //		    230018002449=BusRoute [routeId=30300082, seq=0, stationId=230018002449, stationName=은어송마을6단지, districtId=2501053]
 
@@ -66,7 +70,7 @@ public class DistrictUnit { //행정구역 단위 OD 통행량, 통행 시간
 
           // stationInfo 키가 정류장id
           if (stationInfo.containsKey(boardSID)) {
-            BusRouteUpdate busValue = stationInfo.get(boardSID);
+            BRouteData busValue = stationInfo.get(boardSID);
             boardDistrictId = busValue.getDistrictId();
           }
 
@@ -79,7 +83,7 @@ public class DistrictUnit { //행정구역 단위 OD 통행량, 통행 시간
           String alightDistrictName = null; // 도착 행정구역 명
 
           if (stationInfo.containsKey(alightSID)) {
-            BusRouteUpdate busValue = stationInfo.get(alightSID);
+            BRouteData busValue = stationInfo.get(alightSID);
             alightDistrictId = busValue.getDistrictId();
           }
 

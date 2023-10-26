@@ -1,4 +1,4 @@
-package entity;
+package inputData;
 
 import com.opencsv.CSVReader;
 
@@ -7,10 +7,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
-public class TransactionCard {
+public class TCardData {
   private int cardId; //카드ID
   private int transactionId; //환승Id
   private int transCnt; //환승 횟수
@@ -100,21 +100,24 @@ public class TransactionCard {
         + boardSID + ", alightSID=" + alightSID + ", passengerCnt=" + passengerCnt + "]";
   }
 
-  public Map<String, TransactionCard> ReadTCardData() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_20201102.txt");
+  public static HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardData>>> ReadTCDFile() throws Exception {
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_testFile.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
-    Map<String, TransactionCard> cardInfo = new HashMap<>();
+
+    // Key: 카드ID, 환승ID, 환승횟수
+    HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardData>>> cardData = new HashMap<>();
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
+//    System.out.println(Arrays.toString(header));
 
     while ((str = csvReader.readNext()) != null) {
-      TransactionCard tCard = new TransactionCard();
-      tCard.setCardId(Integer.parseInt(str[0]));
-      tCard.setTransactionId(Integer.parseInt(str[1]));
-      tCard.setTransCnt(Integer.parseInt(str[2]));
+      TCardData tCardData = new TCardData();
+      tCardData.setCardId(Integer.parseInt(str[0]));
+      tCardData.setTransactionId(Integer.parseInt(str[1]));
+      tCardData.setTransCnt(Integer.parseInt(str[2]));
 
       // 승차시간  20201102|130301 -> hour: 13 / minute:3 / second:1
       int hour = Integer.parseInt(str[3].substring(8, 10));
@@ -122,7 +125,7 @@ public class TransactionCard {
       int second = Integer.parseInt(str[3].substring(12));
 
       LocalTime time = LocalTime.of(hour, minute, second); // 20:38:33
-      tCard.setBoardTime(time);
+      tCardData.setBoardTime(time);
 
       // 하차시간 : 공백일때 처리 추가
       if(!str[4].equals("")) {
@@ -131,44 +134,44 @@ public class TransactionCard {
         int second1 = Integer.parseInt(str[4].substring(12));
 
         LocalTime time1 = LocalTime.of(hour1, minute1, second1); // 20:38:33
-        tCard.setAlightTime(time1);
+        tCardData.setAlightTime(time1);
       } else {
-        tCard.setAlightTime(LocalTime.of(0, 0));
+        tCardData.setAlightTime(LocalTime.of(0, 0));
       }
 
       // 노선 아이디가 공백인 경우 존재
       if(!str[6].equals("")) {
-        tCard.setRouteId(Integer.parseInt(str[6]));
+        tCardData.setRouteId(Integer.parseInt(str[6]));
       } else {
-        tCard.setRouteId(0);
+        tCardData.setRouteId(0);
       }
 
-      tCard.setBoardSID(Long.parseLong(str[9]));
+      tCardData.setBoardSID(Long.parseLong(str[9]));
 
       if(!str[10].equals("")) {
-        tCard.setAlightSID(Long.parseLong(str[10]));
+        tCardData.setAlightSID(Long.parseLong(str[10]));
       } else {
-        tCard.setAlightSID(Long.parseLong("0"));
+        tCardData.setAlightSID(Long.parseLong("0"));
       }
 
-      tCard.setPassengerCnt(Integer.parseInt(str[11]));
+      tCardData.setPassengerCnt(Integer.parseInt(str[11]));
 
       // Key 생성: 카드id + 트랜잭션id + 환승횟수
-      int cardId = tCard.getCardId();
-      String key1 = String.valueOf(cardId);
+      int cardId = tCardData.getCardId();
+      int transId = tCardData.getTransactionId();
+      int transCnt = tCardData.getTransCnt();
 
-      int tId = tCard.getTransactionId();
-      String key2 = String.valueOf(tId);
-
-      int cnt = tCard.getTransCnt();
-      String key3 = String.valueOf(cnt);
-
-      String key = key1 + "," + key2 + "," + key3;
-      cardInfo.put(key, tCard);
+      if (!cardData.containsKey(cardId)) {
+        cardData.put(cardId, new HashMap<>());
+      }
+      if (!cardData.get(cardId).containsKey(transId)) {
+        cardData.get(cardId).put(transId, new HashMap<>());
+      }
+      cardData.get(cardId).get(transId).put(transCnt, tCardData);
     }
     csvReader.close();
     reader.close();
 
-    return cardInfo;
+    return cardData;
   }
 }

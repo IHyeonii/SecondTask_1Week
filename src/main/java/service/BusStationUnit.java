@@ -5,7 +5,7 @@ import entity.TransactionCard;
 import java.time.LocalTime;
 import java.util.*;
 
-public class BusStationUnit {// 정류장 단위의 시간대별  승하차 정보 -> txt파일 생성
+public class BusStationUnit {// 정류장 단위의 시간대별  승하차 정보
   public StringBuilder getStationInfo() throws Exception {
     // 1. 카드데이터의 정류장ID를 통해 버스데이터의 정류장명을 가져오고 싶다.
     // 기준: 카드데이터, 참조: 버스데이터
@@ -16,12 +16,16 @@ public class BusStationUnit {// 정류장 단위의 시간대별  승하차 정�
     // 2. 출발정류장id == 버스데이터 정류장id -> 정류장 명 들고온다.
     Map<String, BusRoute> readData = BusRoute.ReadBusData();
 
+//1.   이렇게 수정: Map<Long, TreeMap<Integer, StationBAInfo>> BusStationUnit;
+    //       정류장ID,                시간대  ,   정류장정보
+    //StationBAInfo : 정류장 명칭, 승, 하, 시간대, 정류장ID
+
     // 키: 정류장 Id, 값: 정류장 명칭
     // stationInfo 변수를 어디서 어떻게 사용하려고 만든거에요
     // 정류장ID: 정류장명
     // 승차, 하차, 몇명이탔는지, 언제탔는지 정보가 없음
 
-    Map<String, Integer> mapBoardCnt = new HashMap<>();
+    Map<String, Integer> mapBoardCnt = new HashMap<>(); // 변수명 바꿔
     Map<String, Integer> mapAlightCnt = new HashMap<>();
     // 카드데이터 담고있는 Map 순회하며 Value: 노선id , 출발정류장 Id 랑 일치하는, 버스노선 데이터의 Key를 찾아서, 그 키의 정류장 명을 가져온다.
     // 카드데이터 키를 다 가져와서
@@ -64,6 +68,7 @@ public class BusStationUnit {// 정류장 단위의 시간대별  승하차 정�
     }
 
     // 승차, 하차 따로 집계함
+    // HashSet -> for 반복문으로 중복 값 걸러내기
     Set<String> set = new HashSet<>();
     set.addAll(mapBoardCnt.keySet());
     set.addAll(mapAlightCnt.keySet());

@@ -1,6 +1,6 @@
 package service;
 
-import entity.BusRouteUpdate;
+import entity.BRouteData;
 import entity.TCardUpdate;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,22 +13,13 @@ public class RouteAndStationUnit { //노선-정류장별 승하차, 재차인원
   }
   public void getPassengerByType() throws Exception {
     // 1. key: (노선ID,순번)형태 / value: BusRouteUpdate
-    Map<String, BusRouteUpdate> busData = BusRouteUpdate.AddSeqBusData();
-
-//    Map<String, Integer> busInfo = new HashMap<>();
-//
-//    for(Map.Entry<String, BusRouteUpdate> map : busData.entrySet()) {
-//      String routeAndSeq = map.getKey();
-//      BusRouteUpdate value = map.getValue();
-//      int districtId = value.getDistrictId();
-//
-//      busInfo.put(routeAndSeq, districtId);
-//    }
+    Map<String, BRouteData> busData = BRouteData.AddSeqBusData();
 
     // busData 값이랑 일치하는 출발, 도착정류장ID 가져오기
     TCardUpdate transactionCard = new TCardUpdate();
     HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardUpdate>>> cardData = transactionCard.ReadTCardData();
 
+    // 노선ID <정루장, 승하챂 sum>
     // 승차, 하차, 재차 승객 수 집계
     Map<String, Integer> boardCnt = new HashMap<>();
     Map<String, Integer> alightCnt = new HashMap<>();
