@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -101,8 +103,15 @@ public class TCardData {
   }
 
   public static HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardData>>> ReadTCDFile() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TCD_testFile.txt");
-    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
+    String filePath = "C:\\Users\\ihyeon\\Desktop\\data\\TRIPS_inputData\\20201106";
+//    String inputFile = "TCD_20201102.txt";
+//    String inputFile = "TCD_20201103.txt";
+//    String inputFile = "TCD_20201104.txt";
+//    String inputFile = "TCD_20201105.txt";
+    String inputFile = "TCD_20201106.txt";
+
+    File file = new File(filePath, inputFile);
+    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
@@ -111,7 +120,6 @@ public class TCardData {
     HashMap<Integer, HashMap<Integer, HashMap<Integer, TCardData>>> cardData = new HashMap<>();
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
-//    System.out.println(Arrays.toString(header));
 
     while ((str = csvReader.readNext()) != null) {
       TCardData tCardData = new TCardData();
@@ -119,41 +127,37 @@ public class TCardData {
       tCardData.setTransactionId(Integer.parseInt(str[1]));
       tCardData.setTransCnt(Integer.parseInt(str[2]));
 
-      // 승차시간  20201102|130301 -> hour: 13 / minute:3 / second:1
-      int hour = Integer.parseInt(str[3].substring(8, 10));
-      int minute = Integer.parseInt(str[3].substring(10, 12));
-      int second = Integer.parseInt(str[3].substring(12));
+      /**
+       * 시간대 substring 파싱 -> DateTimeFormatter 변경
+       * */
+      // 승차시간, 20201102130301 -> hour: 13 / minute:3 / second:1
+      String bTime = str[3];
+      DateTimeFormatter bFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
-      LocalTime time = LocalTime.of(hour, minute, second); // 20:38:33
-      tCardData.setBoardTime(time);
+      LocalTime boardTime = LocalTime.parse(bTime, bFormatter);
+      tCardData.setBoardTime(boardTime);
 
-      // 하차시간 : 공백일때 처리 추가
-      if(!str[4].equals("")) {
-        int hour1 = Integer.parseInt(str[4].substring(8, 10));
-        int minute1 = Integer.parseInt(str[4].substring(10, 12));
-        int second1 = Integer.parseInt(str[4].substring(12));
+      // 하차시간
+      String aTime = str[4];
+      DateTimeFormatter aFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 
-        LocalTime time1 = LocalTime.of(hour1, minute1, second1); // 20:38:33
-        tCardData.setAlightTime(time1);
-      } else {
-        tCardData.setAlightTime(LocalTime.of(0, 0));
+      LocalTime alightTime = null;
+
+      try {
+        alightTime = LocalTime.parse(aTime, aFormatter);
+        tCardData.setAlightTime(alightTime);
+      } catch (DateTimeParseException e) {
+        // 공백일 때 0
+        alightTime = LocalTime.of(0, 0);
+        tCardData.setAlightTime(alightTime);
       }
 
-      // 노선 아이디가 공백인 경우 존재
-      if(!str[6].equals("")) {
-        tCardData.setRouteId(Integer.parseInt(str[6]));
-      } else {
-        tCardData.setRouteId(0);
-      }
-
+      /**
+       * 공백일 때 처리 삼항연산자로 수정
+       * */
+      tCardData.setRouteId(!str[6].isEmpty() ? Integer.parseInt(str[6]) : 0);
       tCardData.setBoardSID(Long.parseLong(str[9]));
-
-      if(!str[10].equals("")) {
-        tCardData.setAlightSID(Long.parseLong(str[10]));
-      } else {
-        tCardData.setAlightSID(Long.parseLong("0"));
-      }
-
+      tCardData.setAlightSID(!str[10].isEmpty() ? Long.parseLong(str[10]) : 0);
       tCardData.setPassengerCnt(Integer.parseInt(str[11]));
 
       // Key 생성: 카드id + 트랜잭션id + 환승횟수
@@ -161,13 +165,12 @@ public class TCardData {
       int transId = tCardData.getTransactionId();
       int transCnt = tCardData.getTransCnt();
 
-      if (!cardData.containsKey(cardId)) {
-        cardData.put(cardId, new HashMap<>());
-      }
-      if (!cardData.get(cardId).containsKey(transId)) {
-        cardData.get(cardId).put(transId, new HashMap<>());
-      }
-      cardData.get(cardId).get(transId).put(transCnt, tCardData);
+      HashMap<Integer, HashMap<Integer, TCardData>> tranMap = cardData.getOrDefault(cardId, new HashMap<>());
+      HashMap<Integer, TCardData> transCntMap = tranMap.getOrDefault(transId, new HashMap<>());
+
+      transCntMap.put(transCnt, tCardData);
+      tranMap.put(transId, transCntMap);
+      cardData.put(cardId, tranMap);
     }
     csvReader.close();
     reader.close();
