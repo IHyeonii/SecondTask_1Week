@@ -1,25 +1,12 @@
 package domain;
 
-import inputData.BusRouteData;
-import inputData.TCardData;
-
-import java.sql.Time;
-import java.time.LocalTime;
 
 public class StationBAInfo { // 정류장 승-하차 정보
-  long stationId; // 정류장ID
-  String stationName; //정류장 명
-  int time;
-  int boardPassenger;
-  int alightPassenger;
-
-//  public StationBAInfo(BusRouteData busRouteData, TCardData cardData, Time time) {
-//    this.stationId = busRouteData.getStationId();
-//    this.stationName = busRouteData.getStationName();
-//    this.time = time.getHours();
-//    this.boardPassenger = cardData.getPassengerCnt();
-//    this.alightPassenger = cardData.getPassengerCnt();
-//  }
+  long stationId = 0; // 정류장ID
+  String stationName = ""; //정류장 명
+  int time = 0;
+  int boardPassenger = 0;
+  int alightPassenger = 0;
 
   @Override
   public String toString() {

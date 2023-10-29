@@ -1,6 +1,7 @@
 package inputData;
 
 import com.opencsv.CSVReader;
+import com.sun.source.tree.Tree;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class BusRouteData {// 버스노선-정류장 데이터
   private int routeId; // 노선ID
@@ -19,30 +21,39 @@ public class BusRouteData {// 버스노선-정류장 데이터
   public int getRouteId() {
     return routeId;
   }
+
   public void setRouteId(int routeId) {
     this.routeId = routeId;
   }
+
   public int getDistrictId() {
     return districtId;
   }
+
   public void setDistrictId(int districtId) {
     this.districtId = districtId;
   }
+
   public int getSeq() {
     return seq;
   }
+
   public void setSeq(int seq) {
     this.seq = seq;
   }
+
   public Long getStationId() {
     return stationId;
   }
+
   public void setStationId(Long stationId) {
     this.stationId = stationId;
   }
+
   public String getStationName() {
     return stationName;
   }
+
   public void setStationName(String stationName) {
     this.stationName = stationName;
   }
@@ -53,15 +64,23 @@ public class BusRouteData {// 버스노선-정류장 데이터
         + stationName + ", districtId=" + districtId + "]";
   }
 
-  public static HashMap<Integer, HashMap<Integer, BusRouteData>> ReadBRSFile() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\BRS_20201102.txt");
-    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
+  public static HashMap<Integer, TreeMap<Integer, BusRouteData>> ReadBRSFile() throws Exception {
+    String filePath = "C:\\Users\\ihyeon\\Desktop\\data\\TRIPS_inputData\\20201106";
+//    String inputFile = "BRS_20201102.txt";
+//    String inputFile = "BRS_20201103.txt";
+//    String inputFile = "BRS_20201104.txt";
+//    String inputFile = "BRS_20201105.txt";
+    String inputFile = "BRS_20201106.txt";
+
+    File file = new File(filePath, inputFile);
+    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
 
     // Key: 노선Id, 순번, Value: BusRoute 객체
-    HashMap<Integer, HashMap<Integer, BusRouteData>> busData = new HashMap<>();
+    HashMap<Integer, TreeMap<Integer, BusRouteData>> busData = new HashMap<>();
 
     String[] header = csvReader.readNext(); //처음 필드명 제외
 
@@ -76,12 +95,9 @@ public class BusRouteData {// 버스노선-정류장 데이터
       int routeId = busRoute.getRouteId();
       int seq = busRoute.getSeq();
 
-      if(!busData.containsKey(routeId)) {
-        busData.put(routeId, new HashMap<>());
-      }
-      if(!busData.get(routeId).containsKey(seq)) {
-        busData.get(routeId).put(seq, busRoute);
-      }
+      TreeMap<Integer, BusRouteData> seqMap = busData.getOrDefault(routeId, new TreeMap<>());
+      seqMap.put(seq, busRoute);
+      busData.put(routeId, seqMap);
     }
     csvReader.close();
     reader.close();

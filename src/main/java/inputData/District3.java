@@ -42,7 +42,7 @@ public class District3 {// 읍면동 테이블
   }
 
   public Map<Integer, District3> ReadDistrict() throws Exception {
-    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\District3.txt");
+    File targetFile = new File("C:\\Users\\ihyeon\\Desktop\\data\\TRIPS_inputData\\District3.txt");
     BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(targetFile), "UTF-8"));
     CSVReader csvReader = new CSVReader(reader);
 

@@ -1,4 +1,4 @@
-package resultData;
+package service;
 
 import domain.StationBAInfo;
 import inputData.BusRouteData;
@@ -9,34 +9,29 @@ import java.time.LocalTime;
 import java.util.*;
 
 public class BStationTimeResult {// 정류장 단위의 시간대별 승하차
-
   public static void main(String[] args) throws Exception {
     BStationTimeResult result = new BStationTimeResult();
     result.createStationTimeResult();
   }
-
-
   public void expertData(List<StationBAInfo> list) {
 
     for (int i = 0; i < list.size(); i++) {
       System.out.println(list.get(i));
     }
-
-
   }
 
   public void createStationTimeResult() throws Exception {
     // BRS 파일 읽기 -> key: 노선ID, 순번
     // BufferedReader 사용해서 데이터 한 줄씩 읽어옴 & CSVReader -> 배열 형태
-    HashMap<Integer, HashMap<Integer, BusRouteData>> readBRSFile = BusRouteData.ReadBRSFile();
+    HashMap<Integer, TreeMap<Integer, BusRouteData>> readBRSFile = BusRouteData.ReadBRSFile();
     // Key: 노선ID, 정류장ID, value: 정류장정보 or 정류장 명칭만 필요해
     HashMap<Pair<Integer, Long>, String> busData = new HashMap<>();
     // 출력 -> [30300001, 230018001332]=선비마을
     List<StationBAInfo> vecResult = new ArrayList<StationBAInfo>();
 
-    for (Map.Entry<Integer, HashMap<Integer, BusRouteData>> outerEntry : readBRSFile.entrySet()) {
+    for (Map.Entry<Integer, TreeMap<Integer, BusRouteData>> outerEntry : readBRSFile.entrySet()) {
       Integer routeId = outerEntry.getKey();
-      HashMap<Integer, BusRouteData> entryValue = outerEntry.getValue();
+      TreeMap<Integer, BusRouteData> entryValue = outerEntry.getValue();
 
       for (Map.Entry<Integer, BusRouteData> innerEntry : entryValue.entrySet()) {
         BusRouteData innerValue = innerEntry.getValue();

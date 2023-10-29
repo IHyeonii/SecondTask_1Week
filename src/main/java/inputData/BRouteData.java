@@ -43,6 +43,7 @@ public class BRouteData {// 버스노선-정류장 데이터
   public void setStationId(Long stationId) {
     this.stationId = stationId;
   }
+
   public String getStationName() {
     return stationName;
   }
@@ -56,13 +57,23 @@ public class BRouteData {// 버스노선-정류장 데이터
     return "BusRoute [routeId=" + routeId + ", seq=" + seq + ", stationId=" + stationId + ", stationName="
         + stationName + ", districtId=" + districtId + "]";
   }
-  public static HashMap<Integer, TreeMap<Integer, BRouteData>> ReadBRSFile() throws Exception {
-    String filePath = "C:\\Users\\ihyeon\\Desktop\\data\\TRIPS_inputData\\20201102";
-//    String inputFile = "BRS_20201102";
-    String inputFile = "BRS_test.txt";
 
-    File file = new File(filePath, inputFile);
-    BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+  public static HashMap<Integer, TreeMap<Integer, BRouteData>> ReadBRSFile() throws Exception {
+    String filePath = "C:\\Users\\ihyeon\\Desktop\\data\\TRIPS_inputData\\";
+    int dir = 20201102;
+
+    BufferedReader reader = null;
+
+    for (int days = 0; days < 5; days++) {
+      String dirs = String.valueOf(dir + days);
+
+      StringBuilder sb = new StringBuilder();
+      sb.append("BRS_").append(dirs).append(".txt");
+
+      File file = new File(filePath + dirs, String.valueOf(sb));
+      reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+    }
+
     CSVReader csvReader = new CSVReader(reader);
 
     String[] str = null; // 한줄씩 읽어서 String 변수에 담아
@@ -83,21 +94,9 @@ public class BRouteData {// 버스노선-정류장 데이터
       int routeId = busRoute.getRouteId();
       int seq = busRoute.getSeq();
 
-      /**
-       * 중첩 HashMap에 값 추가하는거 변경
-       * */
-
       TreeMap<Integer, BRouteData> seqMap = busData.getOrDefault(routeId, new TreeMap<>());
-
       seqMap.put(seq, busRoute);
       busData.put(routeId, seqMap);
-
-//      if (!busData.containsKey(routeId)) {
-//        busData.put(routeId, new TreeMap<>());
-//      }
-//      if (!busData.get(routeId).containsKey(seq)) {
-//        busData.get(routeId).put(seq, busRoute);
-//      }
     }
     csvReader.close();
     reader.close();
